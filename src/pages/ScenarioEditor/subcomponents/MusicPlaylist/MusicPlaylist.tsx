@@ -1,16 +1,21 @@
 import { useState } from 'react';
 import { Music, MusicPlaylistProps } from '../../../../interfaces/interfaces';
+import './musicPlaylist.scss';
 
 const MusicPlaylist = ({
+  handlePlayStop,
+  play,
+  allow,
   scenario,
   setScenario,
   setSelectedMusic,
-  isPlaying,
+  handlePlayMusic,
 }: MusicPlaylistProps) => {
   const handleMusicItemClick = (musicId: number): void => {
     const music = scenario.musicPlaylist.find((music) => music.id === musicId);
     setSelectedMusic(music || null);
     setSelectedItemId(musicId);
+    allow && handlePlayMusic(); // Воспроизводим новую музыку при выборе
   };
 
   const handleMusicSelect = (
@@ -55,6 +60,14 @@ const MusicPlaylist = ({
               {music.name}
             </div>
           ))}
+        </div>
+        <div className='btns'>
+          <button className='footer_btn' onClick={play}>
+            Play
+          </button>
+          <button className='footer_btn' onClick={handlePlayStop}>
+            Pause
+          </button>
         </div>
       </div>
       <div className='property-palette'></div>

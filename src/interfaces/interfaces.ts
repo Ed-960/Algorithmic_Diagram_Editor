@@ -69,7 +69,10 @@ export interface FieldProps {
 }
 
 export interface MusicPlaylistProps {
-  isPlaying: boolean | undefined;
+  handlePlayStop: () => void;
+  play: () => void;
+  allow: boolean;
+  handlePlayMusic: () => void;
   scenario: Scenario;
   setScenario: Dispatch<SetStateAction<Scenario>>;
   setSelectedMusic: Dispatch<SetStateAction<Music | null>>;

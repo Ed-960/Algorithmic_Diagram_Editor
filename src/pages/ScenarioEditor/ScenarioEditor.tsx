@@ -47,7 +47,6 @@ const ScenarioEditor: React.FC = () => {
   const handleLoadScenario = (): void => {
     alert('Сценарий загружен');
     willSchemaWork();
-    if (allow) handlePlayMusic();
   };
 
   const handleComponentDrop = (
@@ -107,6 +106,8 @@ const ScenarioEditor: React.FC = () => {
     setSelectedComponent(null);
     // drawConnection();
   };
+  const audioRef = useRef<HTMLAudioElement | null>(null); // Ссылка на текущий экземпляр Audio
+  const audioRefs = useRef<Record<number, HTMLAudioElement | null>>({});
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>): void => {
     event.preventDefault();
@@ -157,25 +158,44 @@ const ScenarioEditor: React.FC = () => {
   };
 
   const handlePlayMusic = (): void => {
-    if (isMusicPlaying) {
-      alert('уже играет одна музыка');
-    }
-    if (!isMusicPlaying && selectedMusic && selectedMusic.file) {
+    if (selectedMusic?.file) {
+      if (audioRef.current) {
+        audioRef.current.pause(); // Останавливаем предыдущую музыку, если есть
+        audioRef.current.currentTime = 0; // Сбрасываем время воспроизведения на начало
+      }
+      // setIsMusicPlaying(true);
+      setIsMusicPlaying(false);
       const audio = new Audio(URL.createObjectURL(selectedMusic.file));
-      audio.play();
-      setSelectedMusic((prevMusic: any) => ({
-        ...prevMusic,
-        isPlaying: true,
-      }));
-      setIsMusicPlaying(true);
-      audio.addEventListener('ended', () => {
-        setIsMusicPlaying(false);
-      });
+      audio.play(); // Запускаем новую музыку
+      audioRef.current = audio; // Сохраняем ссылку на текущий экземпляр Audio
+      audio.addEventListener('ended', () => {});
     }
   };
 
-  // stop music
-  // ...
+  const handlePlayStop = (): void => {
+    if (audioRef.current) {
+      audioRef.current.pause(); // Останавливаем предыдущую музыку, если есть
+    }
+  };
+
+  const play = (): void => {
+    if (audioRef.current) {
+      audioRef.current.play(); // Останавливаем предыдущую музыку, если есть
+    }
+  };
+
+  useEffect(() => {
+    // Остановить все треки, когда isMusicPlaying становится false
+    if (!isMusicPlaying) {
+      Object.values(audioRefs.current).forEach((audio) => {
+        if (audio) {
+          audio.pause();
+          audio.currentTime = 0;
+        }
+      });
+    }
+  }, [isMusicPlaying]);
+
   const allow = isSchema && allowPlayMusic;
 
   // assingment
@@ -401,7 +421,10 @@ const ScenarioEditor: React.FC = () => {
         <div className='sidebar'>
           <ComponentPalette />
           <MusicPlaylist
-            isPlaying={selectedMusic?.isPlaying}
+            handlePlayStop={handlePlayStop}
+            play={play}
+            allow={allow}
+            handlePlayMusic={handlePlayMusic}
             scenario={scenario}
             setScenario={setScenario}
             setSelectedMusic={setSelectedMusic}

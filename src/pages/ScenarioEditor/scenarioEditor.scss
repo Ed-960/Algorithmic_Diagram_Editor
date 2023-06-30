@@ -135,7 +135,7 @@ body {
   margin-bottom: 10px;
 }
 
-.music-box .playlist .music-item {
+.music-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -149,13 +149,16 @@ body {
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-bottom: 5px;
+  &:hover {
+    background-color: #c9c9c9;
+  }
 }
 
-.music-box .playlist .music-item:hover {
-  background-color: #c9c9c9;
+.music-item.selected {
+  background-color: #969696;
 }
 
-.music-box .playlist .music-item .music-name {
+.music-name {
   margin-right: 10px;
 }
 

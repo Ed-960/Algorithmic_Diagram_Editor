@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Music, MusicPlaylistProps } from '../../../../interfaces/interfaces';
 
 const MusicPlaylist = ({
@@ -9,6 +10,7 @@ const MusicPlaylist = ({
   const handleMusicItemClick = (musicId: number): void => {
     const music = scenario.musicPlaylist.find((music) => music.id === musicId);
     setSelectedMusic(music || null);
+    setSelectedItemId(musicId);
   };
 
   const handleMusicSelect = (
@@ -29,6 +31,8 @@ const MusicPlaylist = ({
     }
   };
 
+  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+
   return (
     <div className='music-box'>
       <h2>Upload a music</h2>
@@ -38,11 +42,15 @@ const MusicPlaylist = ({
         <div className='playlist_ovelflow'>
           {scenario.musicPlaylist.map((music) => (
             <div
-              className='music-item'
+              className={`music-item ${
+                selectedItemId === music.id ? 'selected' : ''
+              }`}
               key={music.id}
               draggable
               onClick={() => handleMusicItemClick(music.id)}
-              style={{ backgroundColor: isPlaying ? '#969696' : '#e9e9e9' }}
+              style={{
+                backgroundColor: selectedItemId === music.id ? '#969696' : '',
+              }}
             >
               {music.name}
             </div>
